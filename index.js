@@ -8,6 +8,7 @@ const db = mysql.createConnection({
   user: "kshitijdb",
   password: "root@123",
   insecureAuth: true,
+  database: "spotifydb",
 });
 // connect
 db.connect((err) => {
