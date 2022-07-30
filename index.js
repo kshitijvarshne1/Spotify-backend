@@ -19,9 +19,74 @@ db.connect((err) => {
 });
 
 const app = express();
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send({ status: "working" });
+});
+
+app.post("/addSong", (req, res) => {
+  const date = new Date(req.body.date_of_release);
+  let song = {
+    name: req.body.name,
+    date_of_release: date,
+    artist_id: req.body.artist_id,
+    rating: req.body.artist_id,
+  };
+  let sql = "INSERT into Song SET ?";
+  db.query(sql, song, (err, result) => {
+    if (err) throw err;
+    res.send({ status: "song is added" });
+  });
+});
+
+app.get("/getAllSong", (req, res) => {
+  let sql =
+    "select s.name as song_name,DATE_FORMAT(s.date_of_release,'%D %M %Y') as date, s.rating, a.name as artist_name from spotifydb.song as s left join spotifydb.artist as a on s.artist_id=a.artist_id limit 10;";
+  db.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ data: result });
+  });
+});
+
+app.post("/addArtist", (req, res) => {
+  const date = new Date(req.body.dob);
+  let artist = {
+    name: req.body.name,
+    dob: date,
+  };
+  let sql = "INSERT into Artist SET ?";
+  db.query(sql, artist, (err, result) => {
+    if (err) {
+      res.send({ status: "Artist is not added" });
+      throw err;
+    }
+    res.send({ status: "Artist is added" });
+  });
+});
+
+app.get("/getAllArtist", (req, res) => {
+  let sql = "select a.artist_id, a.name from spotifydb.artist as a";
+  db.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ data: result });
+  });
+});
+
+app.get("/get10Artist", async (req, res) => {
+  let allArtistSql =
+    "select artist_id as id, name, DATE_FORMAT(dob,'%D %M %Y') as dob from spotifydb.artist";
+  let allSongSql = "select * from spotifydb.song";
+
+  var result1 = await db.execute(allArtistSql);
+  console.log(artists);
+  await db.query(allSongSql, (err, res) => {
+    if (err) throw err;
+    result2 = res;
+  });
+  console.log("sdf");
+  console.log(result1);
+  res.send({ status: "yy" });
 });
 
 app.listen("3000", () => {
