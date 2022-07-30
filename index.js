@@ -78,15 +78,24 @@ app.get("/get10Artist", async (req, res) => {
     "select artist_id as id, name, DATE_FORMAT(dob,'%D %M %Y') as dob from spotifydb.artist";
   let allSongSql = "select * from spotifydb.song";
 
-  var result1 = await db.execute(allArtistSql);
-  console.log(artists);
-  await db.query(allSongSql, (err, res) => {
+  await db.query(allArtistSql, (err, res1) => {
     if (err) throw err;
-    result2 = res;
+    db.query(allSongSql, (err, res2) => {
+      if (err) throw err;
+
+      list = [];
+      for (let i of res1) {
+        obj = { id: i.id, name: i.name, dob: i.dob, listOfSong: [] };
+        for (let j of res2) {
+          if (j.artist_id == obj.id) {
+            obj.listOfSong.push(j.name);
+          }
+        }
+        list.push(obj);
+      }
+      res.send({ status: list });
+    });
   });
-  console.log("sdf");
-  console.log(result1);
-  res.send({ status: "yy" });
 });
 
 app.listen("3000", () => {
