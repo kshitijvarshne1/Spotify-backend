@@ -1,5 +1,6 @@
 const express = require("express");
 const mysql = require("mysql");
+let cors = require("cors");
 
 // create connection
 
@@ -20,6 +21,7 @@ db.connect((err) => {
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send({ status: "working" });
