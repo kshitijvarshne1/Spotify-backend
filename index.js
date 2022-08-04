@@ -44,7 +44,7 @@ app.post("/addSong", (req, res) => {
 
 app.get("/getAllSong", (req, res) => {
   let sql =
-    "select s.name as song_name,DATE_FORMAT(s.date_of_release,'%D %M %Y') as date, s.rating, a.name as artist_name from spotifydb.song as s left join spotifydb.artist as a on s.artist_id=a.artist_id limit 10;";
+    "select s.name as song_name,DATE_FORMAT(s.date_of_release,'%D %M %Y') as date, s.rating, a.name as artist_name from spotifydb.song as s left join spotifydb.artist as a on s.artist_id=a.artist_id order by s.rating desc limit 10;";
   db.query(sql, (err, result) => {
     if (err) throw err;
     res.send({ data: result });
